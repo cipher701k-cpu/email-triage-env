@@ -24,19 +24,22 @@ class ResetRequest(BaseModel):
 def root():
     return {"message": "Email Triage Environment is running!", "status": "ready"}
 
+from fastapi import Request
+
 @app.post("/reset")
-def reset(req: Optional[ResetRequest] = None):
-    # Fallback values if the validator sends an empty body
-    session_id = req.session_id if req else "default_session"
-    task_level = req.task_level if req else "easy"
+async def reset(request: Request):
+    try:
+        body = await request.json()
+    except:
+        body = {}
     
-    # Initialize the environment
+    session_id = body.get("session_id", "default_session")
+    task_level = body.get("task_level", "easy")
+    
     env = EmailTriageEnv(task_level=task_level)
     obs = env.reset()
     envs[session_id] = env
     
-    # The validator requires the key "observation"
-    # We ensure it's a dictionary or a string
     return {"observation": obs.dict() if hasattr(obs, 'dict') else obs}
 
 @app.post("/step")
