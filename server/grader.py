@@ -1,11 +1,10 @@
-from environment import EmailTriageEnv, Action
+from .environment import EmailTriageEnv, Action
 
 def run_grader(task_level: str, actions: list) -> float:
     env = EmailTriageEnv(task_level=task_level)
     env.reset()
     total_score = 0.0
     num_emails = len(env.emails)
-
     for i in range(num_emails):
         if i < len(actions):
             action = Action(label=actions[i])
@@ -15,7 +14,6 @@ def run_grader(task_level: str, actions: list) -> float:
         total_score += reward.score
         if done:
             break
-
     final_score = round(total_score / num_emails, 4)
     return final_score
 
