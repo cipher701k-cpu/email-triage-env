@@ -4,8 +4,8 @@ from pydantic import BaseModel
 from typing import Optional
 
 # Import your custom environment and grader logic
-from environment import EmailTriageEnv, Action
-from grader import grade_easy, grade_medium, grade_hard
+from .environment import EmailTriageEnv, Action
+from .grader import grade_easy, grade_medium, grade_hard
 
 app = FastAPI(title="Email Triage Environment")
 
