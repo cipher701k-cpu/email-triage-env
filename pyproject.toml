@@ -16,3 +16,5 @@ dependencies = [
     "pydantic",
     "gymnasium"
 ]
+[project.scripts]
+server = "app:app"
