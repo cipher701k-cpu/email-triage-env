@@ -17,8 +17,8 @@ RUN pip install --no-cache-dir .
 COPY . .
 
 # 5. Set the Port for Hugging Face (7860 is the default)
-ENV PORT=7860
-EXPOSE 7860
+ENV PORT=8000
+EXPOSE 8000
 
 # 6. Start the server using the entry point defined in pyproject.toml
 # This matches 'server = "server.app:main"'
