@@ -1,0 +1,22 @@
+name: email-triage-env
+version: "1.0.0"
+description: "An environment where AI agents learn to triage emails into urgent, normal, or spam categories."
+author: Cipher701
+task_type: classification
+action_space:
+  type: discrete
+  labels: ["urgent", "normal", "spam"]
+observation_space:
+  type: text
+  fields: ["email_id", "subject", "body", "task_level"]
+reward_range: [0.0, 1.0]
+tasks:
+  - id: easy
+    description: "Triage clearly labeled emails"
+    difficulty: easy
+  - id: medium
+    description: "Triage moderately ambiguous emails"
+    difficulty: medium
+  - id: hard
+    description: "Triage tricky, ambiguous emails"
+    difficulty: hard
