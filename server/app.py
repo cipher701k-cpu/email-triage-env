@@ -1,9 +1,7 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from typing import Optional
-
-# These dots are CRITICAL because the file is now inside the /server folder
 from .environment import EmailTriageEnv, Action
 from .grader import grade_easy, grade_medium, grade_hard
 
@@ -16,15 +14,9 @@ class StepRequest(BaseModel):
     session_id: str
     label: str
 
-class ResetRequest(BaseModel):
-    session_id: str = "default_session"
-    task_level: str = "easy"
-
 @app.get("/")
 def root():
     return {"message": "Email Triage Environment is running!", "status": "ready"}
-
-from fastapi import Request
 
 @app.post("/reset")
 async def reset(request: Request):
@@ -48,7 +40,6 @@ def step(req: StepRequest):
     if not env:
         return {"error": "Session not found. Call /reset first."}
     
-    # Convert string label to Action object
     action = Action(label=req.label)
     obs, reward, done = env.step(action)
     
@@ -65,12 +56,7 @@ def state(session_id: str):
         return {"error": "Session not found."}
     return env.state()
 
-# --- ENTRY POINT FOR THE VALIDATOR ---
 def main():
-    """
-    Starts the server on port 8000. 
-    Using 'server.app:app' tells uvicorn the file is in the /server folder.
-    """
     uvicorn.run("server.app:app", host="0.0.0.0", port=8000, reload=False)
 
 if __name__ == "__main__":
