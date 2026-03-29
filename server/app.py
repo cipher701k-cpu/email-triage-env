@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
 
-# Import your custom environment and grader logic
+# These dots are CRITICAL because the file is now inside the /server folder
 from .environment import EmailTriageEnv, Action
 from .grader import grade_easy, grade_medium, grade_hard
 
@@ -30,11 +30,13 @@ def reset(req: Optional[ResetRequest] = None):
     session_id = req.session_id if req else "default_session"
     task_level = req.task_level if req else "easy"
     
+    # Initialize the environment
     env = EmailTriageEnv(task_level=task_level)
     obs = env.reset()
     envs[session_id] = env
     
-    # Return observation in the format the validator expects
+    # The validator requires the key "observation"
+    # We ensure it's a dictionary or a string
     return {"observation": obs.dict() if hasattr(obs, 'dict') else obs}
 
 @app.post("/step")
@@ -43,6 +45,7 @@ def step(req: StepRequest):
     if not env:
         return {"error": "Session not found. Call /reset first."}
     
+    # Convert string label to Action object
     action = Action(label=req.label)
     obs, reward, done = env.step(action)
     
@@ -59,12 +62,13 @@ def state(session_id: str):
         return {"error": "Session not found."}
     return env.state()
 
-# --- THE CRITICAL FIX FOR MULTI-MODE DEPLOYMENT ---
+# --- ENTRY POINT FOR THE VALIDATOR ---
 def main():
     """
-    The entry point called by 'uv run server' as defined in pyproject.toml
+    Starts the server on port 8000. 
+    Using 'server.app:app' tells uvicorn the file is in the /server folder.
     """
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=False)
+    uvicorn.run("server.app:app", host="0.0.0.0", port=8000, reload=False)
 
 if __name__ == "__main__":
     main()
