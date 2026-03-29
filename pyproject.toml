@@ -5,16 +5,16 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "email-triage-env"
 version = "0.1.0"
-description = "RL environment for email triage"
-authors = [
-    { name="Cipher701" }
-]
+description = "Email Triage Environment for OpenEnv"
+authors = [{ name="Cipher701" }]
 requires-python = ">=3.9"
 dependencies = [
     "fastapi",
     "uvicorn",
     "pydantic",
-    "gymnasium"
+    "gymnasium",
+    "openenv-core>=0.2.0"
 ]
+
 [project.scripts]
-server = "app:app"
+server = "app:main"
