@@ -21,10 +21,14 @@ def root():
     return {"message": "Email Triage Environment is running!"}
 
 @app.post("/reset")
-def reset(req: ResetRequest):
-    env = EmailTriageEnv(task_level=req.task_level)
+def reset(req: ResetRequest = None):
+    # If the validator sends nothing, we create a default session
+    session_id = req.session_id if req else "default_session"
+    task_level = req.task_level if req else "easy"
+    
+    env = EmailTriageEnv(task_level=task_level)
     obs = env.reset()
-    envs[req.session_id] = env
+    envs[session_id] = env
     return {"observation": obs.dict()}
 
 @app.post("/step")
